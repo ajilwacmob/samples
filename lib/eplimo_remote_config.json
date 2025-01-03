@@ -1,0 +1,26 @@
+{
+    "conditions": [
+    ],
+    "parameters": {
+      "android_min_build_number": {
+        "defaultValue": {
+          "value":50
+        }
+      },
+      "android_max_build_number": {
+        "defaultValue": {
+          "value": 51
+        }
+      },
+      "ios_min_version_number": {
+        "defaultValue": {
+          "value": "1.0.0"
+        }
+      },
+      "ios_max_version_number": {
+        "defaultValue": {
+          "value": "1.0.1"
+        }
+      }
+    }
+  }
