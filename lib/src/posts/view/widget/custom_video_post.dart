@@ -7,6 +7,7 @@ import 'package:samples/src/posts/view/common_widget/common_discription.dart';
 import 'package:samples/src/posts/view/common_widget/common_video_info.dart';
 import 'package:samples/src/posts/view_model/post_video_view_model.dart';
 import 'package:samples/utils/common_functions.dart';
+import 'package:samples/src/posts/view/common_widget/common_like_comment_repost_send.dart';
 
 class CustomVideoPost extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -58,10 +59,10 @@ class _CustomVideoPostState extends State<CustomVideoPost> {
                   totalFollowers: totalFollowers,
                   isFollowing: isFollowing,
                 ),
-                CommonDiscription(
-                  description: description,
-                ),
+                CommonDiscription(description: description),
                 CommonVideoInfo(video: postData?.video),
+                10.verticalSpace,
+                const CommonLikeCommentRepostSend(),
               ],
             );
           },

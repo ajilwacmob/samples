@@ -54,10 +54,11 @@ class _CustomJobPostState extends State<CustomJobPost> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
-                20.verticalSpace,
+                10.verticalSpace,
                 if (job != null)
                   ListView.separated(
                     itemCount: job.jobs.length,
+                    padding: EdgeInsets.zero,
                     separatorBuilder: (context, index) => const Divider(
                       height: 1,
                     ),

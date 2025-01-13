@@ -36,27 +36,39 @@ class _PostsScreenState extends State<PostsScreen>
     return ChangeNotifierProvider.value(
       value: viewModel,
       child: Scaffold(
-        body: Selector<PostViewModel, List<PostModel>>(
-            selector: (context, selector) => selector.posts,
-            builder: (context, posts, child) {
-              return ListView.separated(
-                itemCount: posts.length,
-                separatorBuilder: (context, index) => 15.verticalSpace,
-                itemBuilder: (context, index) {
-                  MsgType? msgType = posts[index].type;
-                  return switch (msgType) {
-                    MsgType.video =>
-                      CustomVideoPost(data: posts[index].data ?? {}),
-                    MsgType.adds => SizedBox.fromSize(),
-                    MsgType.image =>
-                      CustomPostCards(data: posts[index].data ?? {}),
-                    MsgType.jobs =>
-                      CustomJobPost(data: posts[index].data ?? {}),
-                    null => SizedBox.fromSize(),
-                  };
-                },
-              );
-            }),
+        body: Column(
+          children: [
+            Container(
+              height: 100,
+              width: double.infinity,
+              color: const Color(0xFF1d2226),
+            ),
+            Expanded(
+              child: Selector<PostViewModel, List<PostModel>>(
+                  selector: (context, selector) => selector.posts,
+                  builder: (context, posts, child) {
+                    return ListView.separated(
+                      itemCount: posts.length,
+                      padding: const EdgeInsets.only(top: 8),
+                      separatorBuilder: (context, index) => 15.verticalSpace,
+                      itemBuilder: (context, index) {
+                        MsgType? msgType = posts[index].type;
+                        return switch (msgType) {
+                          MsgType.video =>
+                            CustomVideoPost(data: posts[index].data ?? {}),
+                          MsgType.adds => SizedBox.fromSize(),
+                          MsgType.image =>
+                            CustomPostCards(data: posts[index].data ?? {}),
+                          MsgType.jobs =>
+                            CustomJobPost(data: posts[index].data ?? {}),
+                          null => SizedBox.fromSize(),
+                        };
+                      },
+                    );
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }
