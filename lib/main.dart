@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:samples/di.dart';
 import 'package:samples/firebase_options.dart';
 import 'package:samples/music_module/view/music_main_home_screen.dart';
+import 'package:samples/riverpod_sample/view/river_pod_sample_home_screen.dart';
+import 'package:samples/riverpod_sample/view/riverpod_screen.dart';
 import 'package:samples/src/posts/view/posts_screen.dart';
 import 'package:samples/utils/mutli_provider.dart';
 
@@ -91,9 +91,9 @@ class MyApp extends StatelessWidget {
               //home: const FinanceCardPainterScreen(),
 
               // home: const SensorHomeScreen(),
-              home: const PostsScreen(),
+              //home: const PostsScreen(),
               // home: const GridPaperScreen(),
-              //home: const RiverPodSampleHomeScreen(),
+              home: const RiverpodScreen(),
             );
           }),
     );

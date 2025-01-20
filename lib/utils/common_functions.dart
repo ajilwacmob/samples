@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:samples/data/remote/api_error_types.dart';
+import 'package:samples/utils/loader_states.dart';
 
 Future<bool> isInternetAvailable() async {
   try {
@@ -57,4 +58,26 @@ String getErrorMessage(ApiErrorTypes types) {
     case ApiErrorTypes.oops:
       return "Something went wrong";
   }
+}
+
+
+LoaderState handleResponseError(ApiErrorTypes errorType) {
+  return switch (errorType) {
+    ApiErrorTypes.cancel => LoaderState.error,
+    ApiErrorTypes.noInternet => LoaderState.networkError,
+    ApiErrorTypes.badCertificate => LoaderState.error,
+    ApiErrorTypes.badResponse => LoaderState.error,
+    ApiErrorTypes.connectionError => LoaderState.error,
+    ApiErrorTypes.connectionTimeout => LoaderState.error,
+    ApiErrorTypes.badRequest => LoaderState.error,
+    ApiErrorTypes.jsonParsing => LoaderState.error,
+    ApiErrorTypes.internalServerError => LoaderState.serverError,
+    ApiErrorTypes.sendTimeout => LoaderState.error,
+    ApiErrorTypes.notFound => LoaderState.error,
+    ApiErrorTypes.oops => LoaderState.error,
+    ApiErrorTypes.unAuthorized => LoaderState.error,
+    ApiErrorTypes.serviceUnavailable => LoaderState.error,
+    ApiErrorTypes.receiveTimeout => LoaderState.error,
+    _ => LoaderState.error,
+  };
 }

@@ -5,4 +5,6 @@ enum LoaderState {
   hasData,
   noData,
   error,
+  networkError,
+  serverError
 }
