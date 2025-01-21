@@ -74,6 +74,14 @@ class SwitchStateWidget extends StatelessWidget {
             ],
           ),
         );
+      case LoaderState.networkError:
+        return const SizedBox(
+          height: 0,
+        );
+      case LoaderState.serverError:
+       return const SizedBox(
+          height: 0,
+        );
     }
   }
 }

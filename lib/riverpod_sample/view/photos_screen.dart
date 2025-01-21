@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:samples/chat_module/utils/extension.dart';
-import 'package:samples/riverpod_sample/models/photo_model.dart';
+import 'package:samples/common_widget/common_image_widget.dart';
+import 'package:samples/common_widget/switch_state_widget.dart';
 import 'package:samples/riverpod_sample/notifiers/photo_notifier.dart';
 import 'package:samples/riverpod_sample/states/photo_state.dart';
+import 'package:samples/src/image_gallery/home/model/image_model.dart';
 import 'package:samples/utils/common_functions.dart';
-import 'package:samples/utils/loader_states.dart';
 
 class PhotosScreen extends ConsumerStatefulWidget {
   const PhotosScreen({super.key});
@@ -16,15 +15,35 @@ class PhotosScreen extends ConsumerStatefulWidget {
 }
 
 class _PhotosScreenState extends ConsumerState<PhotosScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   final photosProvider =
       NotifierProvider<PhotoNotifier, PhotoState>(PhotoNotifier.new);
 
   @override
   void initState() {
-    afterInit(() {
-      ref.read(photosProvider.notifier).getPhotos(ref, false);
-    });
+    afterInit(_loadPhotos);
+    _scrollListener();
     super.initState();
+  }
+
+  _scrollListener() {
+    _scrollController.addListener(() {
+      if (_scrollController.offset >=
+              _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange) {
+        final notifier = ref.watch(photosProvider);
+        bool isPaginating = notifier.isPaginating;
+        if (!isPaginating) {
+          _loadPhotos(isPaginating: true);
+        }
+      }
+    });
+  }
+
+  Future<void> _loadPhotos({bool isPaginating = false}) async {
+    PhotoNotifier photoNotifier = ref.read(photosProvider.notifier);
+    return await photoNotifier.getPhotos(isPaginating);
   }
 
   @override
@@ -34,55 +53,57 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
       body: Consumer(
         builder: (_, ref, __) {
           final notifier = ref.watch(photosProvider);
-          if (notifier.loaderState == LoaderState.loading) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            List<Photo> photos = notifier.photos ?? [];
-            return GridView.builder(
-              itemCount: photos.length,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                crossAxisCount: 2,
-              ),
-              itemBuilder: (context, index) {
-                final title = photos[index].title ?? "";
-                return InkWell(
-                  onTap: () {
-                    if (photos[index].id != null) {
-                      ref
-                          .read(photosProvider.notifier)
-                          .deletePhoto(photos[index].id!);
-                    }
-                  },
-                  child: Card(
-                    color: Colors.white,
-                    shadowColor: Colors.blue,
-                    elevation: 3,
-                    child: Center(
-                        child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          index.toString(),
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 18),
-                        ),
-                        10.verticalSpace,
-                        Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 14),
-                        ),
-                      ],
-                    )),
+          List<Hits> photos = notifier.photos ?? [];
+          bool isPaginating = notifier.isPaginating;
+
+          return Column(
+            children: [
+              Expanded(
+                child: SwitchStateWidget(
+                  loaderState: notifier.loaderState!,
+                  errorMessage: notifier.errorMessage,
+                  loadAgain: _loadPhotos,
+                  isRequiredSystemHeight: true,
+                  child: RefreshIndicator(
+                    onRefresh: _loadPhotos,
+                    child: GridView.builder(
+                      itemCount: photos.length,
+                      padding: EdgeInsets.zero,
+                      controller: _scrollController,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisSpacing: 1,
+                        mainAxisSpacing: 1,
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemBuilder: (context, index) {
+                        final imageUrl = photos[index].largeImageURL ?? "";
+                        return InkWell(
+                          onTap: () {
+                            // if (photos[index].id != null) {
+                            //   ref
+                            //       .read(photosProvider.notifier)
+                            //       .deletePhoto(photos[index].id!);
+                            // }
+                          },
+                          child: CommonImageWidget(
+                            imgUrl: imageUrl,
+                            radius: 10,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
-            );
-          }
+                ),
+              ),
+              if (isPaginating)
+                const LinearProgressIndicator(
+                  color: Colors.red,
+                  backgroundColor: Colors.white,
+                )
+            ],
+          );
         },
       ),
     );
