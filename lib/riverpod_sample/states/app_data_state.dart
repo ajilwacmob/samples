@@ -38,8 +38,6 @@ class UserData extends Equatable {
   UserData copyWith({
     String? name,
     String? email,
-    String? phone,
-    String? address,
   }) {
     return UserData(
       name: name ?? this.name,

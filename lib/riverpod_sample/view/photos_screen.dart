@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samples/common_widget/common_image_widget.dart';
 import 'package:samples/common_widget/switch_state_widget.dart';
 import 'package:samples/riverpod_sample/notifiers/photo_notifier.dart';
 import 'package:samples/riverpod_sample/states/photo_state.dart';
+import 'package:samples/riverpod_sample/view/photo_detail_screen.dart';
 import 'package:samples/src/image_gallery/home/model/image_model.dart';
 import 'package:samples/utils/common_functions.dart';
 
@@ -79,17 +81,72 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
                       ),
                       itemBuilder: (context, index) {
                         final imageUrl = photos[index].largeImageURL ?? "";
+                        final title = photos[index].tags ?? "";
                         return InkWell(
                           onTap: () {
-                            // if (photos[index].id != null) {
-                            //   ref
-                            //       .read(photosProvider.notifier)
-                            //       .deletePhoto(photos[index].id!);
-                            // }
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => PhotoDetailScreen(
+                                  index: index,
+                                  photos: photos,
+                                ),
+                              ),
+                            );
                           },
-                          child: CommonImageWidget(
-                            imgUrl: imageUrl,
-                            radius: 10,
+                          child: Stack(
+                            children: [
+                              CommonImageWidget(
+                                imgUrl: imageUrl,
+                                radius: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.black38,
+                                ),
+                              ),
+                              Positioned(
+                                left: 5,
+                                right: 5,
+                                bottom: 5,
+                                child: Text(
+                                  title,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (photos[index].id != null) {
+                                        ref
+                                            .read(photosProvider.notifier)
+                                            .deletePhoto(photos[index].id!);
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.8),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.black,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ))
+                            ],
                           ),
                         );
                       },

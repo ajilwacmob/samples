@@ -10,6 +10,7 @@ class CommonImageWidget extends StatelessWidget {
   final bool showLoader;
   final bool showBorder;
   final double? borderWidth;
+  final AlignmentGeometry? alignment;
   const CommonImageWidget({
     super.key,
     required this.imgUrl,
@@ -19,6 +20,7 @@ class CommonImageWidget extends StatelessWidget {
     this.showLoader = true,
     this.borderWidth,
     this.showBorder = false,
+    this.alignment,
   });
 
   final String defaultimage =
@@ -33,6 +35,7 @@ class CommonImageWidget extends StatelessWidget {
         width: width ?? size.width,
         height: height ?? size.height * .35,
         imageBuilder: (context, imageProvider) => Container(
+          alignment: alignment,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius ?? 0),
             border: showBorder

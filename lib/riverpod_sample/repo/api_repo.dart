@@ -16,7 +16,8 @@ class ApiRepoImpl implements ApiRepo {
   @override
   Future<Either<ResponseError, dynamic>> fetchPhotos(
       {required int page}) async {
-    final url = "${AppConstants.baseUrl}&per_page=20&page=$page";
+    final url =
+        "${AppConstants.baseUrl}&orientation=vertical&image_type=photo&per_page=20&page=$page&q=beautiful+landscape+mountains+rivers+night sky+spaces+galaxys";
     return safe(getRequest(url: url))
         .thenRight(checkHttpStatus)
         .thenRight(parseJson)
