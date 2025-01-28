@@ -28,11 +28,11 @@ class PhotoNotifier extends Notifier<PhotoState> {
       (left) {
         LoaderState loaderState = handleResponseError(left.key);
         updateState(PhotoState(
-            loaderState: loaderState,
+            loaderState: isPaginating ? LoaderState.hasData : loaderState,
             errorMessage: left.message,
             isPaginating: false,
             page: 1,
-            photos: const []));
+            photos: isPaginating ? [...state.photos ?? []] : const []));
       },
       (right) {
         updateState(PhotoState(

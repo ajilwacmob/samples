@@ -11,17 +11,18 @@ class CommonImageWidget extends StatelessWidget {
   final bool showBorder;
   final double? borderWidth;
   final AlignmentGeometry? alignment;
-  const CommonImageWidget({
-    super.key,
-    required this.imgUrl,
-    this.height,
-    this.radius,
-    this.width,
-    this.showLoader = true,
-    this.borderWidth,
-    this.showBorder = false,
-    this.alignment,
-  });
+  final List<Color>? loaderColors;
+  const CommonImageWidget(
+      {super.key,
+      required this.imgUrl,
+      this.height,
+      this.radius,
+      this.width,
+      this.showLoader = true,
+      this.borderWidth,
+      this.showBorder = false,
+      this.alignment,
+      this.loaderColors});
 
   final String defaultimage =
       "https://cutewallpaper.org/24/image-placeholder-png/croppedplaceholderpng-%E2%80%93-osa-grappling.png";
@@ -35,7 +36,6 @@ class CommonImageWidget extends StatelessWidget {
         width: width ?? size.width,
         height: height ?? size.height * .35,
         imageBuilder: (context, imageProvider) => Container(
-          alignment: alignment,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius ?? 0),
             border: showBorder
@@ -44,11 +44,16 @@ class CommonImageWidget extends StatelessWidget {
             image: DecorationImage(
               image: imageProvider,
               fit: BoxFit.cover,
+              alignment: alignment ?? Alignment.center,
             ),
           ),
         ),
         placeholder: (context, url) => Center(
-          child: showLoader ? const CustomLoader() : const SizedBox(),
+          child: showLoader
+              ? CustomLoader(
+                  gradeintColors: loaderColors,
+                )
+              : const SizedBox(),
         ),
         errorWidget: (context, url, error) => Container(
           decoration: BoxDecoration(

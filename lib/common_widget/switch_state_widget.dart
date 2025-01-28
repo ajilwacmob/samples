@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samples/chat_module/utils/extension.dart';
 import 'package:samples/painter/loader_painter.dart';
 import 'package:samples/utils/loader_states.dart';
 
@@ -16,6 +17,33 @@ class SwitchStateWidget extends StatelessWidget {
     required this.loadAgain,
     required this.isRequiredSystemHeight,
   });
+
+  Widget get noInternetWidget => ErrorWidget(
+        title: "No Internet",
+        description: "Please check your internet connection",
+        loadAgain: loadAgain,
+        icon: Icons.wifi_off,
+      );
+
+  Widget get serverErrorWidget => ErrorWidget(
+        title: "Server Error",
+        description: "Please try again later",
+        loadAgain: loadAgain,
+        icon: Icons.computer_rounded,
+      );
+
+  Widget get commonErrorWidget => ErrorWidget(
+        title: "Error",
+        description: "Something went wrong!",
+        loadAgain: loadAgain,
+        icon: Icons.error_outline,
+      );
+
+  Widget get noDatatWidget => const ErrorWidget(
+        title: "No Data",
+        description: "Nothing to show",
+        icon: Icons.data_array_outlined,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -36,53 +64,66 @@ class SwitchStateWidget extends StatelessWidget {
           child: child,
         );
       case LoaderState.noData:
-        return SizedBox(
-          width: size.width,
-          height: isRequiredSystemHeight ? size.height : size.height * .5,
-          child: const Center(
-              child: Text(
-            "Has no data",
-            style: TextStyle(color: Colors.black),
-          )),
-        );
+        return noDatatWidget;
       case LoaderState.error:
-        return SizedBox(
-          width: size.width,
-          height: isRequiredSystemHeight ? size.height : size.height * .5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                errorMessage ?? "",
-                style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: isRequiredSystemHeight ? 100 : 30,
-              ),
-              SizedBox(
-                width: 120,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(), elevation: 1),
-                  onPressed: loadAgain,
-                  child: const Text("Reload"),
-                ),
-              ),
-            ],
-          ),
-        );
+        return commonErrorWidget;
       case LoaderState.networkError:
-        return const SizedBox(
-          height: 0,
-        );
+        return noInternetWidget;
       case LoaderState.serverError:
-       return const SizedBox(
-          height: 0,
-        );
+        return serverErrorWidget;
     }
+  }
+}
+
+class ErrorWidget extends StatelessWidget {
+  final String? title;
+  final IconData? icon;
+  final String? description;
+  final Function()? loadAgain;
+  const ErrorWidget({
+    super.key,
+    this.title,
+    this.icon,
+    this.description,
+    this.loadAgain,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return SizedBox(
+      width: size.width,
+      height: size.height,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon ?? Icons.error, size: 100, color: Colors.black),
+          10.verticalSpace,
+          Text(
+            title ?? "Error",
+            style: const TextStyle(
+                fontSize: 22, color: Colors.black, fontWeight: FontWeight.w500),
+          ),
+          5.verticalSpace,
+          Text(
+            description ?? "Somenthing went wrong!",
+            style: const TextStyle(
+                fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500),
+          ),
+          if (loadAgain != null) 30.verticalSpace,
+          if (loadAgain != null)
+            SizedBox(
+              width: 120,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: const StadiumBorder(), elevation: 1),
+                onPressed: loadAgain,
+                child: const Text("Reload"),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
