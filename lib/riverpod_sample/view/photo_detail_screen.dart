@@ -78,6 +78,11 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                           imgUrl: image.largeImageURL ?? "",
                           height: size.height,
                           width: size.width,
+                          loaderColors: [
+                            Colors.black,
+                            Colors.black.withOpacity(0.5),
+                            Colors.white.withOpacity(0.8),
+                          ],
                         ),
                         Positioned(
                           bottom: 20,

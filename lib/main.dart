@@ -7,9 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:samples/di.dart';
 import 'package:samples/firebase_options.dart';
 import 'package:samples/music_module/view/music_main_home_screen.dart';
-import 'package:samples/riverpod_sample/view/river_pod_sample_home_screen.dart';
 import 'package:samples/riverpod_sample/view/riverpod_screen.dart';
-import 'package:samples/src/posts/view/posts_screen.dart';
 import 'package:samples/utils/mutli_provider.dart';
 
 final navKey = GlobalKey<NavigatorState>();

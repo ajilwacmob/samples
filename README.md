@@ -8,8 +8,8 @@ To successfully run and develop the Joyalukkas Web Remit Mobile App, ensure you 
 |----------------------------|------------------------------------|
 | **Flutter SDK**            | `3.22.3`                           |
 | **Dart SDK**               | `3.4.3`                            |
-| **DevTools Version**       | `2.34.3`                           | 
-| **Kotlin Version**         | `1.9.10`                           | 
+| **DevTools Version**       | `2.34.3`                           |
+| **Kotlin Version**         | `1.9.10`                           |
 | **Android SDK Version**    | `34.0.0`                           |
 | **build-tools**            | `34.0.0`                           |
 | **Gradle**                 | `8.1.1`                            |
