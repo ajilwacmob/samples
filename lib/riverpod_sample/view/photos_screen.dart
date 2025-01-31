@@ -43,9 +43,10 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
     });
   }
 
-  Future<void> _loadPhotos({bool isPaginating = false}) async {
+  Future<void> _loadPhotos(
+      {bool isPaginating = false, bool isReload = false}) async {
     PhotoNotifier photoNotifier = ref.read(photosProvider.notifier);
-    return await photoNotifier.getPhotos(isPaginating);
+    return await photoNotifier.getPhotos(isPaginating, isReload);
   }
 
   @override
@@ -81,10 +82,12 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
                     loadAgain: _loadPhotos,
                     isRequiredSystemHeight: true,
                     child: RefreshIndicator(
-                      onRefresh: _loadPhotos,
+                      onRefresh: () =>
+                          _loadPhotos(isPaginating: false, isReload: true),
                       child: GridView.builder(
                         itemCount: photos.length,
                         padding: EdgeInsets.zero,
+                        physics: const AlwaysScrollableScrollPhysics(),
                         controller: _scrollController,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(

@@ -20,24 +20,15 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   late PageController _pageController;
 
   final ValueNotifier<double> dxNotifier = ValueNotifier<double>(0.0);
+  final ValueNotifier<bool> hasPreviousNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> hasNextNotifier = ValueNotifier<bool>(false);
 
   @override
   void initState() {
     _pageController = PageController(initialPage: widget.index);
-    afterInit(() {
-      // precacheImages();
-      dxNotifier.value = _pageController.page ?? widget.index.toDouble();
-    });
-    _pageController.addListener(() {
-      dxNotifier.value = _pageController.page ?? 0.0;
-    });
+    afterInit(_initialize);
+    _addListener();
     super.initState();
-  }
-
-  precacheImages() {
-    for (final photo in widget.photos) {
-      precacheImage(NetworkImage(photo.largeImageURL ?? ""), context);
-    }
   }
 
   @override
@@ -99,15 +90,116 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     );
                   },
                 );
               },
             ),
+            ValueListenableBuilder(
+              valueListenable: hasPreviousNotifier,
+              builder: (_, hasPrevious, child) {
+                return hasPrevious
+                    ? Positioned(
+                        left: 10,
+                        top: size.height * .7,
+                        child: NextPrevious(
+                          icon: Icons.arrow_back,
+                          onTap: () {
+                            if (hasPrevious) {
+                              _pageController.previousPage(
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.easeInOut);
+                            }
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              },
+            ),
+            ValueListenableBuilder(
+              valueListenable: hasNextNotifier,
+              builder: (_, hasNext, child) {
+                return hasNext
+                    ? Positioned(
+                        right: 10,
+                        top: size.height * .7,
+                        child: NextPrevious(
+                          icon: Icons.arrow_forward,
+                          onTap: () {
+                            if (hasNext) {
+                              _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.easeInOut);
+                            }
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              },
+            )
           ],
         ),
+      ),
+    );
+  }
+
+  _initialize() {
+    dxNotifier.value = _getIndex();
+    hasNextNotifier.value = _getNext();
+    hasPreviousNotifier.value = _getPrevious();
+  }
+
+  _addListener() {
+    _pageController.addListener(() {
+      dxNotifier.value = _getIndex();
+      hasNextNotifier.value = _getNext();
+      hasPreviousNotifier.value = _getPrevious();
+    });
+  }
+
+  double _getIndex() {
+    return _pageController.page ?? widget.index.toDouble();
+  }
+
+  bool _getPrevious() {
+    return _pageController.page?.toInt() != 0;
+  }
+
+  bool _getNext() {
+    return _pageController.page?.toInt() != (widget.photos.length - 1);
+  }
+
+  precacheImages() {
+    for (final photo in widget.photos) {
+      precacheImage(NetworkImage(photo.largeImageURL ?? ""), context);
+    }
+  }
+}
+
+class NextPrevious extends StatelessWidget {
+  final Function()? onTap;
+  final IconData icon;
+  const NextPrevious({
+    super.key,
+    this.onTap,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(100),
+      child: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black.withOpacity(0.4),
+        ),
+        child: Icon(icon),
       ),
     );
   }

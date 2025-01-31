@@ -8,7 +8,7 @@ import 'package:samples/utils/loader_states.dart';
 
 class PhotoNotifier extends Notifier<PhotoState> {
   //// This is the provider that will be used in the consumer widget
-  Future<void> getPhotos(bool isPaginating) async {
+  Future<void> getPhotos(bool isPaginating, bool isReload) async {
     if (isPaginating) {
       updateState(PhotoState(
         isPaginating: isPaginating,
@@ -18,8 +18,7 @@ class PhotoNotifier extends Notifier<PhotoState> {
     } else {
       updateState(PhotoState(
         isPaginating: false,
-        photos: const [],
-        loaderState: LoaderState.loading,
+        loaderState: isReload ? LoaderState.hasData : LoaderState.loading,
         page: 1,
       ));
     }
@@ -48,7 +47,8 @@ class PhotoNotifier extends Notifier<PhotoState> {
             updateState(PhotoState(
               loaderState: LoaderState.hasData,
               isPaginating: false,
-              photos: [...state.photos ?? [], ...photos],
+              photos:
+                  isReload ? [...photos] : [...state.photos ?? [], ...photos],
               page: newPage,
             ));
           } else {
