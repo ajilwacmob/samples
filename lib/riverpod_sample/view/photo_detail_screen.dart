@@ -168,6 +168,7 @@ class _PhotoDetailScreenState extends State<PhotoDetailScreen> {
   }
 
   bool _getNext() {
+    final v = _pageController.page?.clamp(0, 0.5);
     return _pageController.page?.toInt() != (widget.photos.length - 1);
   }
 

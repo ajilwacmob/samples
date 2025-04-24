@@ -16,7 +16,11 @@ class PhotosScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _PhotosScreenState();
 }
 
-class _PhotosScreenState extends ConsumerState<PhotosScreen> {
+class _PhotosScreenState extends ConsumerState<PhotosScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   final ScrollController _scrollController = ScrollController();
 
   final photosProvider =
@@ -24,6 +28,13 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
 
   @override
   void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      lowerBound: 0.0,
+      upperBound: 1.0,
+      duration: const Duration(milliseconds: 500),
+    );
+
     afterInit(_loadPhotos);
     _scrollListener();
     super.initState();
@@ -101,80 +112,91 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
                           itemBuilder: (context, index) {
                             final imageUrl = photos[index].largeImageURL ?? "";
                             final title = photos[index].tags ?? "";
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => PhotoDetailScreen(
-                                      index: index,
-                                      photos: photos,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Stack(
-                                children: [
-                                  CommonImageWidget(
-                                    imgUrl: imageUrl,
-                                    radius: 10,
-                                    loaderColors: [
-                                      Colors.black,
-                                      Colors.black.withOpacity(0.5),
-                                      Colors.white.withOpacity(0.8),
-                                    ],
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.black38,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    left: 5,
-                                    right: 5,
-                                    bottom: 5,
-                                    child: Text(
-                                      title,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
+                            return AnimatedBuilder(
+                                animation: _controller,
+                                builder: (context, animation) {
+                                  return Transform.flip(
+                                    flipX: false,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) =>
+                                                PhotoDetailScreen(
+                                              index: index,
+                                              photos: photos,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          CommonImageWidget(
+                                            imgUrl: imageUrl,
+                                            radius: 10,
+                                            loaderColors: [
+                                              Colors.black,
+                                              Colors.black.withOpacity(0.5),
+                                              Colors.white.withOpacity(0.8),
+                                            ],
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: Colors.black38,
+                                            ),
+                                          ),
+                                          Positioned(
+                                            left: 5,
+                                            right: 5,
+                                            bottom: 5,
+                                            child: Text(
+                                              title,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                              top: 10,
+                                              right: 10,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  _controller.forward();
+                                                  // if (photos[index].id != null) {
+                                                  //   ref
+                                                  //       .read(photosProvider.notifier)
+                                                  //       .deletePhoto(
+                                                  //           photos[index].id!);
+                                                  // }
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                child: Container(
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white
+                                                        .withOpacity(0.8),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.black,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              ))
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                      top: 10,
-                                      right: 10,
-                                      child: InkWell(
-                                        onTap: () {
-                                          if (photos[index].id != null) {
-                                            ref
-                                                .read(photosProvider.notifier)
-                                                .deletePhoto(photos[index].id!);
-                                          }
-                                        },
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.white.withOpacity(0.8),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.black,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ))
-                                ],
-                              ),
-                            );
+                                  );
+                                });
                           },
                         ),
                       ),
